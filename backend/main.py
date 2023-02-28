@@ -1,6 +1,5 @@
-def main():
-    print("Hello, UNO!")
+from fastapi import FastAPI
+from src.routes.router import add_routes
 
-
-if __name__ == "__main__":
-    main()
+app = FastAPI()
+add_routes(app)
