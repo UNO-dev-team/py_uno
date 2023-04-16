@@ -130,3 +130,7 @@ dmypy.json
 
 # Our things
 .fleet/
+
+.DS_Store
+
+venv*
