@@ -48,6 +48,39 @@ class TestCard(unittest.TestCase):
             f"This cards should be equal {red_6_card} == {other_red_6_card}"
         )
 
+    def test_match(self):
+        """Testing Match Method"""
+
+        blue_5_card = Card(color=Color.BLUE, value=Value.FIVE)
+        blue_6_card = Card(color=Color.BLUE, value=Value.SIX)
+        red_6_card = Card(color=Color.RED, value=Value.SIX)
+        other_red_6_card = Card(color=Color.RED, value=Value.SIX)
+
+        # No match
+        self.assertEqual(
+            red_6_card.match(blue_5_card),
+            False,
+            "red_6 and blue_5 have no match"
+        )
+        # Match Color
+        self.assertEqual(
+            blue_5_card.match(blue_6_card),
+            True,
+            "blue_5 matches the color of blue_6"
+        )
+        # Match number
+        self.assertEqual(
+            red_6_card.match(blue_6_card),
+            True,
+            "red_6 matches the value of blue_6"
+        )
+        # Match number & value
+        self.assertEqual(
+            red_6_card.match(other_red_6_card),
+            True,
+            "2 red_6 cards should match each other"
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

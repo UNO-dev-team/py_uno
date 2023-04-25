@@ -18,3 +18,11 @@ class Card:
 
     def __post_init__(self):
         self.img = cargar_imagen(f"{self.color.value}_{self.value.value}")
+
+    def match(self, card) -> bool:
+        """Checks if the card value or color
+          is the same as the supplied card"""
+
+        if isinstance(card, Card):
+            return (self.value == card.value) or (self.color == card.color)
+        return False
