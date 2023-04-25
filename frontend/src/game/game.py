@@ -1,4 +1,5 @@
-from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA
+from src.card.card import Card
+from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA, Value
 from src.board.board import dibujar_tablero, dibujar_carta_moviendose, Tablero
 from src.player.player import Jugador, dibujar_info_jugadores, comer_carta
 from src.deck.deck import generate_deck, dibujar_mazo
@@ -24,7 +25,7 @@ def main(ventana: Surface):
         mazo.repartir(jugador.mano, 7)
 
     tablero.agregar_carta(mazo.cartas.pop(), "Tablero")
-    
+
     turno = 0
     juego_terminado = False
     turno_completo = False
@@ -44,8 +45,8 @@ def main(ventana: Surface):
         # Comprobar si el jugador actual debe comer cartas acumuladas y no tiene un "tome_dos" en su mano
         if acumular_tome_dos > 0:
             tiene_tome_dos = False
-            for c in jugador_actual.mano.cartas:
-                if c.valor == "tome_dos":
+            for card in jugador_actual.mano.cartas:
+                if card.value == Value.TAKE_TWO:
                     tiene_tome_dos = True
                     break
             if not tiene_tome_dos:
@@ -64,9 +65,9 @@ def main(ventana: Surface):
             for indice_carta, carta in enumerate(jugador_actual.mano.cartas):
                 if indice_carta < len(jugador_actual.mano.cartas) - 1:
                     carta_rect = pygame.Rect(
-                        x_offset + espaciado * indice_carta, ALTO_VENTANA - 200, espaciado, carta.imagen.get_height())
+                        x_offset + espaciado * indice_carta, ALTO_VENTANA - 200, espaciado, carta.img.get_height())
                 else:
-                    carta_rect = carta.imagen.get_rect(
+                    carta_rect = carta.img.get_rect(
                         topleft=(x_offset + espaciado * indice_carta, ALTO_VENTANA - 200))
 
                 if carta_rect.collidepoint(x, y):
@@ -90,9 +91,9 @@ def main(ventana: Surface):
                         for indice_carta, carta in reversed(list(enumerate(jugador_actual.mano.cartas))):
                             if indice_carta < len(jugador_actual.mano.cartas) - 1:
                                 carta_rect = pygame.Rect(
-                                    x_offset + espaciado * indice_carta, ALTO_VENTANA - 200, espaciado, carta.imagen.get_height())
+                                    x_offset + espaciado * indice_carta, ALTO_VENTANA - 200, espaciado, carta.img.get_height())
                             else:
-                                carta_rect = carta.imagen.get_rect(
+                                carta_rect = carta.img.get_rect(
                                     topleft=(x_offset + espaciado * indice_carta, ALTO_VENTANA - 200))
 
                             if carta_rect.collidepoint(x, y) and es_movimiento_valido(carta, tablero.obtener_ultima_carta()):
@@ -134,13 +135,13 @@ def main(ventana: Surface):
 
         # Acciones comunes para todos los jugadores (salto, tome_dos, reversa)
         if turno_completo:
-            carta = tablero.obtener_ultima_carta()
-            if carta.valor == "salto":
+            card: Card = tablero.obtener_ultima_carta()
+            if card.value == Value.JUMP:
                 turno += 2 * direccion
-            elif carta.valor == "tome_dos":
+            elif card.value == Value.TAKE_TWO:
                 acumular_tome_dos += 2
                 turno += direccion
-            elif carta.valor == "reversa":
+            elif card.value == Value.REVERSED:
                 direccion *= -1
                 turno += direccion
             else:
@@ -179,8 +180,10 @@ def main(ventana: Surface):
     pygame.quit()
 
 # Función para verificar si un movimiento es válido
-def es_movimiento_valido(carta, ultima_carta):
-    return carta.color == ultima_carta.color or carta.valor == ultima_carta.valor
+
+
+def es_movimiento_valido(carta: Card, ultima_carta: Card):
+    return carta.color == ultima_carta.color or carta.value == ultima_carta.value
 
 
 def dibujar_indicador_turno(ventana, jugador_actual, posiciones):

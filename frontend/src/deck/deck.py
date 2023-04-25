@@ -1,17 +1,20 @@
-from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA
-from src.utils.images import cargar_imagen
 
-from src.card.card import Carta
 
 from pygame.transform import scale
 from pygame.font import Font
 from random import shuffle
 
+from src.card.card import Card
+from src.utils.deck_creation import all_card_colors, all_card_values
+from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA, Color, Value
+from src.utils.images import cargar_imagen
+
+
 class Mazo:
     def __init__(self):
-        self.cartas = []
+        self.cartas: list[Card] = []
 
-    def agregar_carta(self, carta):
+    def agregar_carta(self, carta: Card):
         self.cartas.append(carta)
 
     def barajar(self):
@@ -23,21 +26,26 @@ class Mazo:
 
 
 def generate_deck():
-    colores = ["rojo", "verde", "azul", "amarillo"]
-    valores = list(range(10)) + ["salto", "reversa", "tome_dos"]
-    mazo = Mazo()
+    """Handles the creation of a new standar uno deck"""
+    colors: list[Color] = all_card_colors()
+    values: list[Value] = all_card_values()
+    deck = Mazo()
 
-    for color in colores:
-        for valor in valores:
-            if valor == 0:
-                mazo.agregar_carta(
-                    Carta(color, valor, cargar_imagen(f"{color}_{valor}")))
-            else:
-                for _ in range(2):
-                    mazo.agregar_carta(
-                        Carta(color, valor, cargar_imagen(f"{color}_{valor}")))
+    # We create the all the cards and add it to the deck
+    for color in colors:
+        for value in values:
+            deck.agregar_carta(
+                Card(
+                    color=color,
+                    value=value
+                )
+            )
+            if value.value != "0":
+                deck.agregar_carta(
+                    Card(color=color, value=value)
+                )
 
-    return mazo
+    return deck
 
 
 def dibujar_mazo(ventana, mazo):
