@@ -18,18 +18,18 @@ class CardContainer(ABC):
         """Is the card container empty"""
         return len(self._cards) == 0
 
+    def get_all(self) -> List[Card]:
+        """Returns a copy the current list of cards of this container"""
+        return list(self._cards)
+
+    def delete(self, index: int) -> None:
+        """Deletes the card at the provided index"""
+        self._cards.pop(index)
+
     @abstractmethod
     def add(self, card: Card) -> None:
         """TBD"""
 
     @abstractmethod
     def get(self, index: int) -> Card:
-        """TBD"""
-
-    @abstractmethod
-    def get_all(self) -> List[Card]:
-        """TBD"""
-
-    @abstractmethod
-    def delete(self, card: Card) -> None:
         """TBD"""
