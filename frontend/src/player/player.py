@@ -1,72 +1,7 @@
 from src.board.board import dibujar_carta_moviendose
-from src.hand.hand import Mano, Hand
-from src.card.card import Carta
+from src.hand.hand import Mano
 from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA
 from pygame.font import Font
-from abc import ABC, abstractmethod
-
-
-class BasePlayer(ABC):
-    """BasePlayer.
-    clase base para jugadores.
-    """
-    def __init__(self, name: str):
-        self._name = name
-        self._hand = Hand()
-
-    @property
-    def name(self) -> str:
-        """Name.
-
-        Returns:
-            str: Return the name of the player.
-        """
-        return self._name
-
-    @property
-    def is_winner(self) -> bool:
-        """is_winner.
-        Returns a boolean indicating the player is winner.
-
-        Returns:
-            bool: The hand is empty.
-        """
-        return self._hand.empty
-    
-    @abstractmethod
-    def turn(self) -> Carta:
-        """Turn.
-        When is called, this method returns a Card instance, which follows the game logic.
-
-        returns:
-            Card: The following card to play.
-        """
-
-    @abstractmethod
-    def take_card(self, c: Carta) -> None:
-        """Take card.
-        This method adds to the hand the passed card.
-
-        Args:
-            c (Card): Card to add 
-        """
-
-    @abstractmethod
-    def delete_card(self, c: Carta = None, idx: int = -1) -> None:
-        """Deletes the card indicated by the index or the card to be deleted.
-
-        Raises:
-            RuntimeError: you does not provides a valid index or Card.
-        """
-
-    @abstractmethod
-    def put_card(self, idx: int) -> Carta:
-        """Put card.
-        This method returns the card indicated by the index. Also deletes the card from the hand.
-
-        Args:
-            idx (int): The index of the card to return.
-        """
 
 
 class Jugador:
