@@ -1,4 +1,42 @@
 from pygame.transform import scale
+from src.card_container.card_container import CardContainer
+from src.card.card import Card
+from collections.abc import Iterable
+
+
+class Hand(CardContainer):
+    """Hand class.
+    Asociated with player, contains all cards to be played. Inherits from CardContainer.
+    """
+    def __init__(self):
+        super().__init__()
+
+    def add(self, card: Card) -> None:
+        """Add.
+        This method allows to add a card into the hand of player. If needed multiple cards adding, recommended to use add_multiple_cards.
+
+        Args:
+            card: Card. Card to be added.
+        
+        returns: None.
+        """
+        self._cards.append(card)
+
+    def add_multiple_cards(self, cards: Iterable[Card]) -> None:
+        """Add multiple cards.
+        This method allows to add multiple cards into the hand of player.
+        Args:
+            card: Interable[card]. Card to be added.
+        
+        returns: None.
+        """
+        self._cards.extend(cards)
+
+    def get(self, index: int) -> Card:
+        """Get.
+        This method allows to get a card from the had of the player.
+        """
+        return self._cards[index]
 
 
 class Mano:
