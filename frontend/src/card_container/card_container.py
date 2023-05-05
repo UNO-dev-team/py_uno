@@ -30,8 +30,8 @@ class CardContainer(ABC):
 
     @abstractmethod
     def add(self, card: Card) -> None:
-        """TBD"""
+        """Adds a Card to the container"""
 
     @abstractmethod
     def get(self, index: int) -> Card:
-        """TBD"""
+        """Returns a card from the container"""
