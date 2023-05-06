@@ -1,18 +1,24 @@
+from card.card import Card
 from src.board.board import dibujar_carta_moviendose
+from src.deck.deck import Deck
 from src.hand.hand import Mano, Hand
 from src.card.card import Card
 from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA
+from src.utils.consts import special_card
 from pygame.font import Font
 from abc import ABC, abstractmethod
+from typing import Optional
 
 
 class BasePlayer(ABC):
     """BasePlayer.
     clase base para jugadores.
     """
-    def __init__(self, name: str):
+    def __init__(self, name: str, x: int, y: int):
         self._name = name
         self._hand = Hand()
+        self._x_pos = x
+        self._y_pos = y
 
     @property
     def name(self) -> str:
@@ -34,7 +40,7 @@ class BasePlayer(ABC):
         return self._hand.empty
     
     @abstractmethod
-    def turn(self) -> Card:
+    def turn(self, previous_card: Card) -> Optional[Card]:
         """Turn.
         When is called, this method returns a Card instance, which follows the game logic.
 
