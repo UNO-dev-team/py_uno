@@ -1,51 +1,56 @@
-
+"""Deck Module"""
+from random import shuffle
 
 from pygame.transform import scale
 from pygame.font import Font
-from random import shuffle
 
 from src.card.card import Card
+from src.card_container.card_container import CardContainer
 from src.utils.deck_creation import all_card_colors, all_card_values
 from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA, Color, Value
 from src.utils.images import cargar_imagen
 
 
-class Mazo:
-    def __init__(self):
-        self.cartas: list[Card] = []
+class Deck(CardContainer):
+    """The board deck it holds the all the cards"""
 
-    def agregar_carta(self, carta: Card):
-        self.cartas.append(carta)
+    def add(self, card: Card) -> None:
+        """Adds the card to the back of the deck"""
+        self._cards.append(card)
 
-    def barajar(self):
-        shuffle(self.cartas)
+    def get(self, index: int) -> Card:
+        """ Returns a card at the given index and 
+        removes it from the deck"""
+        return self._cards.pop(index)
 
-    def repartir(self, mano, cantidad):
-        for _ in range(cantidad):
-            mano.agregar_carta(self.cartas.pop())
+    def shuffle(self) -> None:
+        """Shuffles the deck in place and returns None"""
+        shuffle(self._cards)
 
+    def give_card(self, container: CardContainer, n: int = 1) -> None:
+        """Gives n cards from the front of the deck to
+        the provided CardContainer, n defaults to 1"""
+        for _ in range(n):
+            container.add(self.get(0))
 
-def generate_deck():
-    """Handles the creation of a new standar uno deck"""
-    colors: list[Color] = all_card_colors()
-    values: list[Value] = all_card_values()
-    deck = Mazo()
+    def init_deck(self) -> None:
+        """Handles the creation of a new standar uno deck"""
+        colors: list[Color] = all_card_colors()
+        values: list[Value] = all_card_values()
 
-    # We create the all the cards and add it to the deck
-    for color in colors:
-        for value in values:
-            deck.agregar_carta(
-                Card(
-                    color=color,
-                    value=value
+        # We create the all the cards and add it to the deck
+        for color in colors:
+            for value in values:
+                self.add(
+                    Card(
+                        color=color,
+                        value=value
+                    )
                 )
-            )
-            if value.value != "0":
-                deck.agregar_carta(
-                    Card(color=color, value=value)
-                )
-
-    return deck
+                if value.value != "0":
+                    self.add(
+                        Card(color=color, value=value)
+                    )
 
 
 def dibujar_mazo(ventana, mazo):
