@@ -13,10 +13,13 @@ class CardContainer(ABC):
     def __init__(self):
         self._cards: List[Card] = list()
 
+    def __len__(self):
+        return len(self._cards)
+
     @property
     def is_empty(self) -> bool:
         """Is the card container empty"""
-        return len(self._cards) == 0
+        return len(self) == 0
 
     def get_all(self) -> List[Card]:
         """Returns a copy the current list of cards of this container"""
