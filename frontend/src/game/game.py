@@ -1,20 +1,24 @@
 from src.card.card import Card
+from src.drawer.drawer import Drawer
 from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA, Value
 from src.board.board import dibujar_tablero, dibujar_carta_moviendose, Board
 from src.player.player import Jugador, dibujar_info_jugadores, comer_carta
-from src.deck.deck import generate_deck, dibujar_mazo
+from src.deck.deck import Deck
 from src.hand.hand import dibujar_cartas_mano
 from src.screen.screen import pantalla_inicio
+from src.utils.position import Position
+
 from pygame.draw import circle
 from pygame import Surface
+
 import pygame
 
 
 def main(ventana: Surface):
     reloj = pygame.time.Clock()
     num_IA = pantalla_inicio(ventana)
-    mazo = generate_deck()
-    mazo.barajar()
+    deck = Deck()
+    deck.init_deck()
     jugadores = [Jugador("Jugador 1")]
 
     for i in range(num_IA):
@@ -22,9 +26,9 @@ def main(ventana: Surface):
     tablero = Board()
 
     for jugador in jugadores:
-        mazo.repartir(jugador.mano, 7)
+        jugador.mano.cartas = deck.give_card(n = 7)
 
-    tablero.add(mazo.cartas.pop(), "Tablero")
+    tablero.agregar_carta(deck.get(-1), "Tablero")
 
     turno = 0
     juego_terminado = False
@@ -51,7 +55,7 @@ def main(ventana: Surface):
                     break
             if not tiene_tome_dos:
                 for _ in range(acumular_tome_dos):
-                    comer_carta(mazo, jugador_actual, ventana)
+                    comer_carta(mazo, jugador_actual)
                 acumular_tome_dos = 0
                 turno += direccion
                 continue
@@ -85,7 +89,7 @@ def main(ventana: Surface):
 
                         # Comer carta
                         if (ANCHO_VENTANA // 2 - 120) < x < (ANCHO_VENTANA // 2 - 20) and (ALTO_VENTANA // 2 - 70) < y < (ALTO_VENTANA // 2 + 30):
-                            comer_carta(mazo, jugador_actual, ventana)
+                            comer_carta(mazo, jugador_actual)
                             # turno_completo = True
                         # Jugar carta
                         for indice_carta, carta in reversed(list(enumerate(jugador_actual.mano.cartas))):
@@ -97,12 +101,10 @@ def main(ventana: Surface):
                                     topleft=(x_offset + espaciado * indice_carta, ALTO_VENTANA - 200))
 
                             if carta_rect.collidepoint(x, y) and es_movimiento_valido(carta, tablero.obtener_ultima_carta()):
-                                dibujar_carta_moviendose(ventana, carta, [x - 30, ALTO_VENTANA - 220], [
-                                                         ANCHO_VENTANA // 2 - 20, ALTO_VENTANA // 2 - 150], 20)
-                                # animacion_jugar_carta(ventana, carta, (x - 30, ALTO_VENTANA - 220),
-                                #                       (ANCHO_VENTANA // 2 - 50, ALTO_VENTANA // 2 - 50), mazo, tablero, jugadores)
-                                50 + 30 * (len(jugador.mano.cartas) -
-                                           1), ALTO_VENTANA - 200
+                                start_card = Position(x - 30, ALTO_VENTANA - 220)
+                                end_card = Position(ANCHO_VENTANA // 2 - 20, ALTO_VENTANA // 2 - 150)
+                                Drawer.draw_moving_card(carta, start_card, end_card)
+
                                 tablero.add(
                                     jugador_actual.mano.quitar_carta(indice_carta), jugador_actual.nombre)
                                 turno_completo = True
@@ -131,7 +133,7 @@ def main(ventana: Surface):
                         break
 
                 if not carta_valida_encontrada:
-                    comer_carta(mazo, jugador_actual, ventana)
+                    comer_carta(mazo, jugador_actual)
 
         # Acciones comunes para todos los jugadores (salto, tome_dos, reversa)
         if turno_completo:
@@ -150,11 +152,14 @@ def main(ventana: Surface):
             turno_completo = False
 
         ventana.fill((255, 255, 255))
-        dibujar_tablero(ventana, tablero)
-        dibujar_mazo(ventana, mazo)
+        Drawer.draw_board(tablero)
+        Drawer.draw_deck(deck)
         # Dibuja las cartas de los jugadores en diferentes posiciones según su número
+        # TODO: DRAW ALL HANDS
         dibujar_cartas_mano(
             ventana, jugadores[0], 50, ALTO_VENTANA - 200, carta_resaltada)
+        
+        
         if num_IA == 1:
             dibujar_cartas_mano(ventana, jugadores[1], 50, 50)
         elif num_IA == 2:

@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from pygame import Surface
 
 from src.utils.consts import Color, Value
-from src.utils.images import cargar_imagen
+from src.utils.images import load_image
 
 
 @dataclass
@@ -17,7 +17,7 @@ class Card:
     img: Surface = field(init=False, compare=False, repr=False)
 
     def __post_init__(self):
-        self.img = cargar_imagen(f"{self.color.value}_{self.value.value}")
+        self.img = load_image(f"{self.color.value}_{self.value.value}")
 
     def match(self, card) -> bool:
         """Checks if the card value or color

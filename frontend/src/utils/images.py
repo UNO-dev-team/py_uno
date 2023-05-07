@@ -1,5 +1,5 @@
 from pygame.image import load
 
 
-def cargar_imagen(nombre):
+def load_image(nombre):
     return load(f"images/{nombre}.png")

@@ -1,12 +1,13 @@
 from src.game import game
-from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA
+from src.drawer.drawer import Drawer
 import pygame
 
 
-pygame.init()
-ventana = pygame.display.set_mode((ANCHO_VENTANA, ALTO_VENTANA))
-pygame.display.set_caption("Uno")
-
+def main():
+    pygame.init()
+    Drawer.setup()
+    screen = Drawer.screen
+    game.main(screen)
 
 if __name__ == "__main__":
-    game.main(ventana)
+    main()
