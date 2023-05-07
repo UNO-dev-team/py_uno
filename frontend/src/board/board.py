@@ -3,6 +3,60 @@ from pygame.time import delay
 
 from src.card.card import Card
 from src.utils.consts import ANCHO_VENTANA, ALTO_VENTANA
+from src.card_container.card_container import CardContainer
+
+
+class Board(CardContainer):
+    """
+    Board class that extends CardContainer.
+    Represents the game board where cards are played and matched.
+    """
+
+    def __init__(self):
+        """
+        Initializes a new instance of the Board class.
+        """
+        super().__init__()
+
+    def add(self, card: Card) -> None:
+        """
+        Adds a card to the board if it matches the last card in the board.
+
+        Args:
+            card (Card): The card to be added to the board.
+
+        Raises:
+            RuntimeError: If the card added does not match the last card in the board.
+        """
+        if not self._cards:  # Check if the board is empty
+            self._cards.append(card)
+            return
+        last_card = self._cards[-1]
+        if card.match(last_card):
+            self._cards.append(card)
+            return
+        raise RuntimeError("Carta agregada no válida.")
+
+    def get(self, index: int) -> Card:
+        """
+        Returns the card at the given index in the board.
+
+        Args:
+            index (int): The index of the card to be retrieved.
+
+        Returns:
+            Card: The card at the given index.
+        """
+        return self._cards[index]
+
+    def delete(self) -> Card:
+        """
+        Removes and returns the last card in the board.
+
+        Returns:
+            Card: The removed card.
+        """
+        return self._cards.pop()
 
 
 class Tablero:
@@ -10,8 +64,6 @@ class Tablero:
         self.cartas_jugadas = []
 
     def agregar_carta(self, card: Card, jugador):
-        print()
-        print(f"{jugador} jugo la carta: {card.color.value} - {card.value.value}")
         self.cartas_jugadas.append(card)
 
     def obtener_ultima_carta(self):

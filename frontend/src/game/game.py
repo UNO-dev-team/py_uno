@@ -1,6 +1,6 @@
 from src.card.card import Card
 from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA, Value
-from src.board.board import dibujar_tablero, dibujar_carta_moviendose, Tablero
+from src.board.board import dibujar_tablero, dibujar_carta_moviendose, Board
 from src.player.player import Jugador, dibujar_info_jugadores, comer_carta
 from src.deck.deck import generate_deck, dibujar_mazo
 from src.hand.hand import dibujar_cartas_mano
@@ -19,12 +19,12 @@ def main(ventana: Surface):
 
     for i in range(num_IA):
         jugadores.append(Jugador(f"IA {i + 1}"))
-    tablero = Tablero()
+    tablero = Board()
 
     for jugador in jugadores:
         mazo.repartir(jugador.mano, 7)
 
-    tablero.agregar_carta(mazo.cartas.pop(), "Tablero")
+    tablero.add(mazo.cartas.pop(), "Tablero")
 
     turno = 0
     juego_terminado = False
@@ -103,7 +103,7 @@ def main(ventana: Surface):
                                 #                       (ANCHO_VENTANA // 2 - 50, ALTO_VENTANA // 2 - 50), mazo, tablero, jugadores)
                                 50 + 30 * (len(jugador.mano.cartas) -
                                            1), ALTO_VENTANA - 200
-                                tablero.agregar_carta(
+                                tablero.add(
                                     jugador_actual.mano.quitar_carta(indice_carta), jugador_actual.nombre)
                                 turno_completo = True
                                 break
@@ -124,7 +124,7 @@ def main(ventana: Surface):
                             x_inicial, y_inicial = ANCHO_VENTANA - 100, ALTO_VENTANA - 220
                         dibujar_carta_moviendose(ventana, carta, [x_inicial, y_inicial], [
                             ANCHO_VENTANA // 2 - 20, ALTO_VENTANA // 2], 20)
-                        tablero.agregar_carta(
+                        tablero.add(
                             jugador_actual.mano.quitar_carta(indice_carta), jugador_actual.nombre)
                         turno_completo = True
                         carta_valida_encontrada = True
