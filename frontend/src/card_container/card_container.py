@@ -24,7 +24,6 @@ class CardContainer(ABC):
     def get_all(self) -> List[Card]:
         """Returns a copy the current list of cards of this container"""
         ref: List[Card] = list(self._cards)
-        self._cards = list()
         return ref
 
     def delete(self, index: int) -> None:

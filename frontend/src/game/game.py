@@ -1,20 +1,27 @@
 from src.card.card import Card
+from src.drawer.drawer import Drawer
 from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA, Value
 from src.board.board import dibujar_tablero, dibujar_carta_moviendose, Board
-from src.player.player import Jugador, dibujar_info_jugadores, comer_carta
-from src.deck.deck import generate_deck, dibujar_mazo
+from src.player.player import Jugador, dibujar_info_jugadores
+from src.deck.deck import Deck
 from src.hand.hand import dibujar_cartas_mano
 from src.screen.screen import pantalla_inicio
+from src.utils.position import Position
+from src.utils import consts
+from pygame.image import load
+
 from pygame.draw import circle
 from pygame import Surface
+
 import pygame
 
 
 def main(ventana: Surface):
     reloj = pygame.time.Clock()
     num_IA = pantalla_inicio(ventana)
-    mazo = generate_deck()
-    mazo.barajar()
+    deck = Deck()
+    deck.init_deck()
+    deck.shuffle()
     jugadores = [Jugador("Jugador 1")]
 
     for i in range(num_IA):
@@ -22,9 +29,10 @@ def main(ventana: Surface):
     tablero = Board()
 
     for jugador in jugadores:
-        mazo.repartir(jugador.mano, 7)
+        deck.give_card(jugador.hand, 7)
+        # jugador.hand._cards = deck.give_card(n=7)
 
-    tablero.add(mazo.cartas.pop(), "Tablero")
+    tablero.add(deck.get(-1))
 
     turno = 0
     juego_terminado = False
@@ -45,13 +53,13 @@ def main(ventana: Surface):
         # Comprobar si el jugador actual debe comer cartas acumuladas y no tiene un "tome_dos" en su mano
         if acumular_tome_dos > 0:
             tiene_tome_dos = False
-            for card in jugador_actual.mano.cartas:
+            for card in jugador_actual.hand.get_all():
                 if card.value == Value.TAKE_TWO:
                     tiene_tome_dos = True
                     break
             if not tiene_tome_dos:
                 for _ in range(acumular_tome_dos):
-                    comer_carta(mazo, jugador_actual, ventana)
+                    deck.give_card(jugador_actual.hand)
                 acumular_tome_dos = 0
                 turno += direccion
                 continue
@@ -60,10 +68,10 @@ def main(ventana: Surface):
             x, y = pygame.mouse.get_pos()
             x_offset = 50
             espaciado = 30 if len(
-                jugador_actual.mano.cartas) <= 20 else 800 // len(jugador_actual.mano.cartas)
+                jugador_actual.hand) <= 20 else 800 // len(jugador_actual.hand)
 
-            for indice_carta, carta in enumerate(jugador_actual.mano.cartas):
-                if indice_carta < len(jugador_actual.mano.cartas) - 1:
+            for indice_carta, carta in enumerate(jugador_actual.hand.iterate()):
+                if indice_carta < len(jugador_actual.hand) - 1:
                     carta_rect = pygame.Rect(
                         x_offset + espaciado * indice_carta, ALTO_VENTANA - 200, espaciado, carta.img.get_height())
                 else:
@@ -84,27 +92,30 @@ def main(ventana: Surface):
                         x_offset = 50
 
                         # Comer carta
-                        if (ANCHO_VENTANA // 2 - 120) < x < (ANCHO_VENTANA // 2 - 20) and (ALTO_VENTANA // 2 - 70) < y < (ALTO_VENTANA // 2 + 30):
-                            comer_carta(mazo, jugador_actual, ventana)
+                        if (ANCHO_VENTANA // 2 - 160) < x < (ANCHO_VENTANA // 2 - 50) and (ALTO_VENTANA // 2 - 40) < y < (ALTO_VENTANA // 2 + 110):
+                            deck.give_card(jugador_actual.hand)
                             # turno_completo = True
                         # Jugar carta
-                        for indice_carta, carta in reversed(list(enumerate(jugador_actual.mano.cartas))):
-                            if indice_carta < len(jugador_actual.mano.cartas) - 1:
+                        for indice_carta, carta in reversed(list(enumerate(jugador_actual.hand.iterate()))):
+                            if indice_carta < len(jugador_actual.hand) - 1:
                                 carta_rect = pygame.Rect(
                                     x_offset + espaciado * indice_carta, ALTO_VENTANA - 200, espaciado, carta.img.get_height())
                             else:
                                 carta_rect = carta.img.get_rect(
                                     topleft=(x_offset + espaciado * indice_carta, ALTO_VENTANA - 200))
 
-                            if carta_rect.collidepoint(x, y) and es_movimiento_valido(carta, tablero.obtener_ultima_carta()):
-                                dibujar_carta_moviendose(ventana, carta, [x - 30, ALTO_VENTANA - 220], [
-                                                         ANCHO_VENTANA // 2 - 20, ALTO_VENTANA // 2 - 150], 20)
-                                # animacion_jugar_carta(ventana, carta, (x - 30, ALTO_VENTANA - 220),
-                                #                       (ANCHO_VENTANA // 2 - 50, ALTO_VENTANA // 2 - 50), mazo, tablero, jugadores)
-                                50 + 30 * (len(jugador.mano.cartas) -
-                                           1), ALTO_VENTANA - 200
+                            if carta_rect.collidepoint(x, y) and es_movimiento_valido(carta, tablero.get(-1)):
+                                start_card = Position(
+                                    x - 30, ALTO_VENTANA - 220)
+                                end_card = Position(
+                                    ANCHO_VENTANA // 2 - 20, ALTO_VENTANA // 2 - 150)
+                                Drawer.draw_moving_card(
+                                    carta, start_card, end_card)
+
                                 tablero.add(
-                                    jugador_actual.mano.quitar_carta(indice_carta), jugador_actual.nombre)
+                                    jugador_actual.hand.pop(indice_carta))
+                                # tablero.add(
+                                #     jugador_actual.mano.quitar_carta(indice_carta), jugador_actual.nombre)
                                 turno_completo = True
                                 break
 
@@ -114,8 +125,8 @@ def main(ventana: Surface):
                 pygame.time.delay(1000)
                 carta_valida_encontrada = False
 
-                for indice_carta, carta in enumerate(jugador_actual.mano.cartas):
-                    if es_movimiento_valido(carta, tablero.obtener_ultima_carta()):
+                for indice_carta, carta in enumerate(jugador_actual.hand.iterate()):
+                    if es_movimiento_valido(carta, tablero.get(-1)):
                         if turno % len(jugadores) == 1:
                             x_inicial, y_inicial = 60, 40
                         elif turno % len(jugadores) == 2:
@@ -124,18 +135,19 @@ def main(ventana: Surface):
                             x_inicial, y_inicial = ANCHO_VENTANA - 100, ALTO_VENTANA - 220
                         dibujar_carta_moviendose(ventana, carta, [x_inicial, y_inicial], [
                             ANCHO_VENTANA // 2 - 20, ALTO_VENTANA // 2], 20)
-                        tablero.add(
-                            jugador_actual.mano.quitar_carta(indice_carta), jugador_actual.nombre)
+                        tablero.add(jugador_actual.hand.pop(indice_carta))
+                        # tablero.add(
+                        #     jugador_actual.mano.quitar_carta(indice_carta), jugador_actual.nombre)
                         turno_completo = True
                         carta_valida_encontrada = True
                         break
 
                 if not carta_valida_encontrada:
-                    comer_carta(mazo, jugador_actual, ventana)
+                    deck.give_card(jugador_actual.hand)
 
         # Acciones comunes para todos los jugadores (salto, tome_dos, reversa)
         if turno_completo:
-            card: Card = tablero.obtener_ultima_carta()
+            card: Card = tablero.get(-1)
             if card.value == Value.JUMP:
                 turno += 2 * direccion
             elif card.value == Value.TAKE_TWO:
@@ -150,11 +162,13 @@ def main(ventana: Surface):
             turno_completo = False
 
         ventana.fill((255, 255, 255))
-        dibujar_tablero(ventana, tablero)
-        dibujar_mazo(ventana, mazo)
+        Drawer.draw_board(tablero)
+        Drawer.draw_deck(deck)
         # Dibuja las cartas de los jugadores en diferentes posiciones según su número
+        # TODO: DRAW ALL HANDS
         dibujar_cartas_mano(
             ventana, jugadores[0], 50, ALTO_VENTANA - 200, carta_resaltada)
+
         if num_IA == 1:
             dibujar_cartas_mano(ventana, jugadores[1], 50, 50)
         elif num_IA == 2:
@@ -171,7 +185,7 @@ def main(ventana: Surface):
                                 len(jugadores), posiciones_turno)
         fuente_turno = pygame.font.Font(None, 30)
         texto_turno = fuente_turno.render(
-            f"Turno de {jugadores[turno % len(jugadores)].nombre}", 1, (0, 0, 0))
+            f"Turno de {jugadores[turno % len(jugadores)].name}", 1, (0, 0, 0))
         ventana.blit(texto_turno, (ANCHO_VENTANA // 2 -
                                    texto_turno.get_width() // 2, ALTO_VENTANA // 2 - 100))
         pygame.display.flip()
@@ -190,3 +204,31 @@ def dibujar_indicador_turno(ventana, jugador_actual, posiciones):
     radio = 10
     color = (255, 0, 0)
     circle(ventana, color, posiciones[jugador_actual], radio)
+
+
+def comer_carta(mazo, jugador: Jugador):
+    if len(mazo.cartas) == 0:
+        return
+
+    carta = mazo.cartas.pop()
+    print(f"comio carta el jugador: {jugador.name}")
+    # jugador.mano.agregar_carta(carta)
+    jugador.hand.add(carta)
+
+    # Añade la animación de tomar cartas
+    x_start, y_start = consts.DECK_POSITION
+    start = Position(x_start, y_start)
+
+    if jugador.name == "Jugador 1":
+        x_end, y_end = (
+            50 + 30 * (len(jugador.hand) - 1), ALTO_VENTANA - 200)
+    elif jugador.name == "IA 1":
+        x_end, y_end = (50 + 30 * (len(jugador.hand) - 1), 10)
+    elif jugador.name == "IA 2":
+        x_end, y_end = (ANCHO_VENTANA - 100, 10)
+    elif jugador.name == "IA 3":
+        x_end, y_end = (ANCHO_VENTANA - 100, ALTO_VENTANA - 100)
+
+    end = Position(x_end, y_end)
+
+    Drawer.draw_moving_card(carta, start, end)

@@ -1,7 +1,7 @@
-from card.card import Card
-from src.board.board import dibujar_carta_moviendose
-from src.deck.deck import Deck
-from src.hand.hand import Mano, Hand
+
+from src.utils.position import Position
+
+from src.hand.hand import Hand
 from src.card.card import Card
 from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA
 from src.utils.consts import special_card
@@ -14,11 +14,11 @@ class BasePlayer(ABC):
     """BasePlayer.
     clase base para jugadores.
     """
+
     def __init__(self, name: str, x: int, y: int):
         self._name = name
         self._hand = Hand()
-        self._x_pos = x
-        self._y_pos = y
+        self._position = Position(x, y)
 
     @property
     def name(self) -> str:
@@ -38,7 +38,7 @@ class BasePlayer(ABC):
             bool: The hand is empty.
         """
         return self._hand.empty
-    
+
     @abstractmethod
     def turn(self, previous_card: Card) -> Optional[Card]:
         """Turn.
@@ -77,17 +77,24 @@ class BasePlayer(ABC):
             idx (int): The index of the card to return.
         """
 
+    @property
+    def position(self):
+        return self._position.tuple()
+
+    def __len__(self) -> int:
+        return len(self._hand)
+
 
 class Jugador:
     def __init__(self, nombre):
-        self.nombre = nombre
-        self.mano = Mano()
+        self.name = nombre
+        self.hand = Hand()
 
 
 def dibujar_info_jugadores(ventana, jugadores):
     fuente = Font(None, 24)
     for i, jugador in enumerate(jugadores):
-        nombre = f"{jugador.nombre}: {len(jugador.mano.cartas)} cartas"
+        nombre = f"{jugador.name}: {len(jugador.hand)} cartas"
         texto = fuente.render(nombre, 1, (0, 0, 0))
         if i == 0:
             ventana.blit(texto, (10, ALTO_VENTANA - 280))
@@ -97,25 +104,3 @@ def dibujar_info_jugadores(ventana, jugadores):
             ventana.blit(texto, (ANCHO_VENTANA - 200, 10))
         elif i == 3:
             ventana.blit(texto, (ANCHO_VENTANA - 200, ALTO_VENTANA - 280))
-
-
-def comer_carta(mazo, jugador, ventana):
-    if len(mazo.cartas) == 0:
-        return
-
-    carta = mazo.cartas.pop()
-    print(f"comio carta el jugador: {jugador.nombre}")
-    jugador.mano.agregar_carta(carta)
-    pos_inicial = [ANCHO_VENTANA // 2 - 170, ALTO_VENTANA // 2 - 60]
-    # Añade la animación de tomar cartas
-    if jugador.nombre == "Jugador 1":
-        pos_final = [
-            50 + 30 * (len(jugador.mano.cartas) - 1), ALTO_VENTANA - 200]
-    elif jugador.nombre == "IA 1":
-        pos_final = [50 + 30 * (len(jugador.mano.cartas) - 1), 10]
-    elif jugador.nombre == "IA 2":
-        pos_final = [ANCHO_VENTANA - 100, 10]
-    elif jugador.nombre == "IA 3":
-        pos_final = [ANCHO_VENTANA - 100, ALTO_VENTANA - 100]
-
-    dibujar_carta_moviendose(ventana, carta, pos_inicial, pos_final, 20)

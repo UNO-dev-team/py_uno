@@ -8,6 +8,7 @@ class Hand(CardContainer):
     """Hand class.
     Asociated with player, contains all cards to be played. Inherits from CardContainer.
     """
+
     def __init__(self):
         super().__init__()
 
@@ -17,7 +18,7 @@ class Hand(CardContainer):
 
         Args:
             card: Card. Card to be added.
-        
+
         returns: None.
         """
         self._cards.append(card)
@@ -27,7 +28,7 @@ class Hand(CardContainer):
         This method allows to add multiple cards into the hand of player.
         Args:
             card: Interable[card]. Card to be added.
-        
+
         returns: None.
         """
         self._cards.extend(cards)
@@ -37,9 +38,12 @@ class Hand(CardContainer):
         This method allows to get a card from the had of the player.
         """
         return self._cards[index]
-    
+
     def iterate(self):
         return (card for card in self._cards)
+
+    def pop(self, index: int):
+        return self._cards.pop(index)
 
 
 class Mano:
@@ -55,13 +59,14 @@ class Mano:
 
 def dibujar_cartas_mano(ventana, jugador, x_offset, y_offset, carta_resaltada=None):
     espaciado = 30 if len(
-        jugador.mano.cartas) <= 20 else 800 // len(jugador.mano.cartas)
+        jugador.hand) <= 20 else 800 // len(jugador.hand)
 
-    for indice_carta, carta in enumerate(jugador.mano.cartas):
+    for indice_carta, carta in enumerate(jugador.hand.iterate()):
         x_pos = x_offset + espaciado * indice_carta
         if carta_resaltada is not None and indice_carta == carta_resaltada:
-            imagen_resaltada = scale(carta.img, (int(
-                carta.img.get_width() * 1.2), int(carta.img.get_height() * 1.2)))
+            imagen_resaltada = scale(carta.img,
+                                     (int(carta.img.get_width() * 1.2),
+                                      int(carta.img.get_height() * 1.2)))
             ventana.blit(imagen_resaltada, (x_pos -
                          int(carta.img.get_width() * 0.1), y_offset - 50))
         else:
