@@ -1,7 +1,7 @@
 # py_uno
 A full stack app recreating the famous UNO game, using Fast API, Javascript and Firebase.
 
-#Description
+# Description
 El proyecto de UNO con Pygame en Python es un juego de cartas basado en el popular juego de mesa UNO. La estructura general del proyecto se divide en varias secciones: 
 En primer lugar, la sección de "Configuración" establece las variables y parámetros iniciales del juego, como la cantidad de jugadores y la cantidad de cartas iniciales que se le asignan a cada jugador.
 La sección de "Interfaz gráfica" maneja la interfaz de usuario del juego, incluyendo la pantalla de inicio y selección de oponentes, la pantalla de juego y la pantalla de resultados. En esta sección, se utilizan las bibliotecas de pygame para crear y renderizar imágenes y textos, y para manejar la entrada del usuario a través del mouse.
