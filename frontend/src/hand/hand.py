@@ -40,24 +40,63 @@ class Hand(CardContainer):
         return self._cards[index]
 
     def iterate(self):
+        """Iterate.
+        This method returns a generator with the references to all of the cards.
+        """
         return (card for card in self._cards)
 
     def pop(self, index: int):
+        """POP.
+        This method allows to get a card from the had of the player and delete it.
+        """
         return self._cards.pop(index)
 
 
 class Mano:
+    """Una clase que representa la mano de un jugador en un juego de cartas (versión en español).
+
+    La clase Mano está asociada con un jugador y contiene todas las cartas que
+    pueden ser jugadas.
+    """
     def __init__(self):
         self.cartas = []
 
     def agregar_carta(self, carta):
+        """agregar_carta.
+        This method allows to add a card into the hand of player
+
+        Args:
+            carta: Card. Card to be added.
+
+        returns: None.
+        """
         self.cartas.append(carta)
 
     def quitar_carta(self, indice):
+        """quitar_carta.
+        This method allows to delete a card into the hand of player.
+
+        Args:
+            indice: int. Card to be deleted.
+
+        returns: None.
+        """
         return self.cartas.pop(indice)
 
 
 def dibujar_cartas_mano(ventana, jugador, x_offset, y_offset, carta_resaltada=None):
+    """Dibuja las cartas en la mano de un jugador en la ventana de Pygame.
+
+    Args:
+        ventana (pygame.Surface): La superficie de Pygame donde se dibujarán las cartas.
+        jugador: El jugador cuya mano se va a dibujar.
+        x_offset (int): Desplazamiento en el eje X para las cartas en la ventana.
+        y_offset (int): Desplazamiento en el eje Y para las cartas en la ventana.
+        carta_resaltada (int, optional): El índice de la carta que se va a resaltar. Si es None, ninguna carta será resaltada. Por defecto es None.
+
+    Returns:
+        None
+    """
     espaciado = 30 if len(
         jugador.hand) <= 20 else 800 // len(jugador.hand)
 

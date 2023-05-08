@@ -17,6 +17,12 @@ import pygame
 
 
 def main(ventana: Surface):
+    """
+    Función principal que ejecuta el juego de cartas. Inicializa y ejecuta el bucle del juego.
+
+    Args:
+        ventana (Surface): La ventana de Pygame donde se dibujará el juego.
+    """
     reloj = pygame.time.Clock()
     num_IA = pantalla_inicio(ventana)
     deck = Deck()
@@ -197,16 +203,43 @@ def main(ventana: Surface):
 
 
 def es_movimiento_valido(carta: Card, ultima_carta: Card):
+    """
+    Verifica si el movimiento de una carta es válido según la última carta jugada en el tablero.
+
+    Args:
+        carta (Card): La carta que se intenta jugar.
+        ultima_carta (Card): La última carta jugada en el tablero.
+
+    Returns:
+        bool: True si el movimiento es válido, False en caso contrario.
+    """
     return carta.color == ultima_carta.color or carta.value == ultima_carta.value
 
 
 def dibujar_indicador_turno(ventana, jugador_actual, posiciones):
+    """
+    Dibuja un indicador de turno en la ventana para el jugador actual.
+
+    Args:
+        ventana (pygame.Surface): Superficie de Pygame donde se dibujará el indicador.
+        jugador_actual (int): Índice del jugador actual en la lista de posiciones.
+        posiciones (list): Lista de posiciones (x, y) para cada jugador.
+
+    """
     radio = 10
     color = (255, 0, 0)
     circle(ventana, color, posiciones[jugador_actual], radio)
 
 
 def comer_carta(mazo, jugador: Jugador):
+    """
+    Toma una carta del mazo y la agrega a la mano del jugador. También dibuja una animación de movimiento de la carta.
+
+    Args:
+        mazo (Mazo): Objeto Mazo que contiene las cartas.
+        jugador (Jugador): Objeto Jugador al que se le agregará la carta tomada del mazo.
+
+    """
     if len(mazo.cartas) == 0:
         return
 

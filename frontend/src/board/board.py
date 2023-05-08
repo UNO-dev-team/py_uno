@@ -60,23 +60,57 @@ class Board(CardContainer):
 
 
 class Tablero:
+    """Una clase que representa el tablero en un juego de cartas.
+
+    La clase Tablero lleva un registro de las cartas que se han jugado.
+    """
     def __init__(self):
         self.cartas_jugadas = []
 
     def agregar_carta(self, card: Card, jugador):
+        """
+        Adds a card to the board if it matches the last card in the board.
+
+        Args:
+            card (Card): The card to be added to the board.
+        """
         self.cartas_jugadas.append(card)
 
     def obtener_ultima_carta(self):
+        """
+        Gets the last card from the board.
+        """
         return self.cartas_jugadas[-1] if self.cartas_jugadas else None
 
 
 def dibujar_tablero(ventana, tablero):
+    """Dibuja el tablero en la ventana de Pygame.
+
+    Args:
+        ventana (pygame.Surface): La superficie de Pygame donde se dibujará el tablero.
+        tablero (Tablero): El objeto Tablero que se va a dibujar.
+
+    Returns:
+        None
+    """
     if tablero.obtener_ultima_carta():
         ventana.blit(tablero.obtener_ultima_carta().img,
                      (ANCHO_VENTANA // 2 - 50, ALTO_VENTANA // 2 - 50))
 
 
 def dibujar_carta_moviendose(ventana, card: Card, pos_inicial, pos_final, pasos):
+    """Dibuja una carta moviéndose desde una posición inicial hasta una posición final en la ventana de Pygame.
+
+    Args:
+        ventana (pygame.Surface): La superficie de Pygame donde se dibujará la carta en movimiento.
+        card (Card): La carta que se va a mover.
+        pos_inicial (list): Una lista de dos elementos [x, y] que representan la posición inicial de la carta.
+        pos_final (list): Una lista de dos elementos [x, y] que representan la posición final de la carta.
+        pasos (int): El número de pasos en los que se debe completar el movimiento.
+
+    Returns:
+        None
+    """
     paso_actual = 0
     pos_actual = pos_inicial
 

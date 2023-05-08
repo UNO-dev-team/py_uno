@@ -6,6 +6,18 @@ from pygame.display import flip
 
 
 def pantalla_inicio(screen: Surface):
+    """
+    Presenta una pantalla de inicio al usuario para seleccionar el número de IA (Inteligencia Artificial) en el juego.
+    
+    La función permite al usuario elegir entre 1, 2 o 3 IA. La pantalla muestra las opciones y espera a que el usuario haga clic en una de ellas.
+    Luego, devuelve el número de IA seleccionado por el usuario.
+
+    Args:
+        screen (Surface): La ventana de Pygame donde se mostrarán las opciones de IA.
+
+    Returns:
+        int: El número de IA seleccionado por el usuario (1, 2 o 3).
+    """
     fuente = Font(None, 36)
     texto1 = fuente.render("Selecciona el número de IA (1-3)", 1, (0, 0, 0))
     opcion1 = fuente.render("1 IA", 1, (0, 0, 0))
