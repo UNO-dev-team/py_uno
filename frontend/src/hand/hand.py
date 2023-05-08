@@ -37,6 +37,9 @@ class Hand(CardContainer):
         This method allows to get a card from the had of the player.
         """
         return self._cards[index]
+    
+    def iterate(self):
+        return (card for card in self._cards)
 
 
 class Mano:
