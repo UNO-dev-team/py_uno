@@ -4,7 +4,7 @@ from src.card.card import Card
 from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA
 from pygame.font import Font
 from abc import ABC, abstractmethod
-
+from src.deck.deck import Deck
 
 class BasePlayer(ABC):
     """BasePlayer.
@@ -70,6 +70,26 @@ class BasePlayer(ABC):
         Args:
             idx (int): The index of the card to return.
         """
+
+class Player(BasePlayer):
+    def turn(self) -> Card:
+       # implementation here
+       #is_valid_card
+       #put_card
+        pass
+
+    def take_card(self) -> None:
+        return Hand.add(Deck.get(self, 0))
+
+
+    def is_valid_card(self, c: Card) -> bool:
+        return Card.match(self,c)
+
+        
+
+    def put_card(self, c: Card) -> Card:
+        pass
+
 
 
 class Jugador:
