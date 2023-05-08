@@ -18,8 +18,6 @@ import pygame
 
 def main(ventana: Surface):
     reloj = pygame.time.Clock()
-    imagen_fondo = load('images/Table_2.png')
-    ventana.blit(imagen_fondo, (0, 0))  
     num_IA = pantalla_inicio(ventana)
     deck = Deck()
     deck.init_deck()
@@ -49,7 +47,6 @@ def main(ventana: Surface):
     ]
 
     while not juego_terminado:
-
         jugador_actual = jugadores[turno % len(jugadores)]
         carta_resaltada = None
 
