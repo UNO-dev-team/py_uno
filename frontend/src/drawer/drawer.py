@@ -34,11 +34,11 @@ class Drawer:
 
     @classmethod
     def draw_board(cls, board: Board):
-        last_card = board.get_all()
+        list_cards = board.get_all()
+        if list_cards is not None:
+            card = board.get(-1)
+            cls.screen.blit(card.img, BOARD_POS)
 
-        if last_card is not None:
-            cls.screen.blit(last_card.img, BOARD_POS)
-    
     @classmethod
     def draw_deck(cls, deck: Deck):
         top_card = load_image('mazo')
@@ -46,7 +46,7 @@ class Drawer:
 
         img = scale(top_card,
                     (weidth // 3, height // 3))
-        
+
         deck_shape = img.get_rect()
         deck_shape.center = (weidth // 2 - 120, height // 2 + 40)
         cls._screen.blit(img, deck_shape)
@@ -54,8 +54,9 @@ class Drawer:
         font = Font(None, 36)
         deck_length = str(len(deck))
         text = font.render(deck_length, 1, WHITE)
-        cls._screen.blit(text, (ANCHO_VENTANA // 2 - 115, ALTO_VENTANA // 2 - 20))
-    
+        cls._screen.blit(text, (ANCHO_VENTANA // 2 -
+                         115, ALTO_VENTANA // 2 - 20))
+
     @classmethod
     def draw_moving_card(cls, c: Card, start: Position, end: Position, steps: int = 20):
         actual = Position(0, 0)
@@ -68,7 +69,7 @@ class Drawer:
             cls.screen.blit(c.img, actual_tuple)
             flip()
             time.delay(MOVING_CARD_DELAY)
-    
+
     @classmethod
     def draw_hand(cls, h: Hand, offset: Position, c: Card = None):
         len_hand = len(h)
@@ -81,20 +82,19 @@ class Drawer:
             if c is None:
                 cls.screen.blit(card.img, (x_pos, offset.y))
                 return
-            
 
-            special_card_img = scale(card.img, 
-                                     (int(card.img.get_width() * 1.2), 
+            special_card_img = scale(card.img,
+                                     (int(card.img.get_width() * 1.2),
                                       int(card.img.get_height() * 1.2)))
-            
-            cls.screen.blit(special_card_img, 
-                            (x_pos -int(card.img.get_width() * 0.1), 
+
+            cls.screen.blit(special_card_img,
+                            (x_pos - int(card.img.get_width() * 0.1),
                              offset.y - 50))
 
     @classmethod
     def draw_players(cls, players: list[BasePlayer]):
         font = Font(None, 24)
-        
+
         for player in players:
             name = f'{player.name}: {len(player._hand)} cards'
             text = font.render(name, 1, BLACK)

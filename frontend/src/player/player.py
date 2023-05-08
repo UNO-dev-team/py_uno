@@ -1,10 +1,8 @@
-from src.utils import consts
+
 from src.utils.position import Position
 
-from src.drawer.drawer import Drawer
-from src.hand.hand import Mano, Hand
+from src.hand.hand import Hand
 from src.card.card import Card
-from src.drawer.drawer import Drawer
 from src.utils.consts import ALTO_VENTANA, ANCHO_VENTANA
 from src.utils.consts import special_card
 from pygame.font import Font
@@ -90,7 +88,7 @@ class BasePlayer(ABC):
 class Jugador:
     def __init__(self, nombre):
         self.nombre = nombre
-        self.mano = Mano()
+        self.hand = Hand()
 
 
 def dibujar_info_jugadores(ventana, jugadores):
@@ -106,30 +104,3 @@ def dibujar_info_jugadores(ventana, jugadores):
             ventana.blit(texto, (ANCHO_VENTANA - 200, 10))
         elif i == 3:
             ventana.blit(texto, (ANCHO_VENTANA - 200, ALTO_VENTANA - 280))
-
-
-def comer_carta(mazo, jugador):
-    if len(mazo.cartas) == 0:
-        return
-
-    carta = mazo.cartas.pop()
-    print(f"comio carta el jugador: {jugador.nombre}")
-    jugador.mano.agregar_carta(carta)
-
-    # Añade la animación de tomar cartas
-    x_start, y_start = consts.DECK_POSITION
-    start = Position(x_start, y_start)
-
-    if jugador.nombre == "Jugador 1":
-        x_end, y_end = (
-            50 + 30 * (len(jugador.mano.cartas) - 1), ALTO_VENTANA - 200)
-    elif jugador.nombre == "IA 1":
-        x_end, y_end = (50 + 30 * (len(jugador.mano.cartas) - 1), 10)
-    elif jugador.nombre == "IA 2":
-        x_end, y_end = (ANCHO_VENTANA - 100, 10)
-    elif jugador.nombre == "IA 3":
-        x_end, y_end = (ANCHO_VENTANA - 100, ALTO_VENTANA - 100)
-
-    end = Position(x_end, y_end)
-
-    Drawer.draw_moving_card(carta, start, end)
