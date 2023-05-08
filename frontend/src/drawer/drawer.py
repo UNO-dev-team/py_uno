@@ -3,7 +3,7 @@ from pygame.display import set_mode, set_caption, flip
 from pygame.transform import scale
 from pygame.font import Font
 from pygame import time
-
+from pygame.image import load
 from src.utils.images import load_image
 from src.board.board import Board
 from src.hand.hand import Hand
@@ -30,6 +30,7 @@ class Drawer:
     @classmethod
     def setup(cls):
         cls._screen = set_mode(SCREEN_SIZE)
+
         set_caption('UNO!')
 
     @classmethod
@@ -48,7 +49,7 @@ class Drawer:
                     (weidth // 3, height // 3))
 
         deck_shape = img.get_rect()
-        deck_shape.center = (weidth // 2 - 120, height // 2 + 40)
+        deck_shape.center = (weidth // 2 + 100, height // 2 + 160)
         cls._screen.blit(img, deck_shape)
 
         font = Font(None, 36)
@@ -59,16 +60,17 @@ class Drawer:
 
     @classmethod
     def draw_moving_card(cls, c: Card, start: Position, end: Position, steps: int = 20):
-        actual = Position(0, 0)
+        actual = Position(start.x, start.y)
 
         for _ in range(steps):
-            actual.x += end.x - start.x // steps
-            actual.y += end.y - start.y // steps
+            actual.x += (end.x - start.x) // steps
+            actual.y += (end.y - start.y) // steps
 
             actual_tuple = actual.tuple()
             cls.screen.blit(c.img, actual_tuple)
             flip()
             time.delay(MOVING_CARD_DELAY)
+
 
     @classmethod
     def draw_hand(cls, h: Hand, offset: Position, c: Card = None):

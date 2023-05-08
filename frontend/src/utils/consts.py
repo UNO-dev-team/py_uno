@@ -10,10 +10,10 @@ DECK_POSITION = (ANCHO_VENTANA // 2 - 170, ALTO_VENTANA // 2 - 60)
 
 
 class Color(Enum):
-    YELLOW = 'amarillo'
-    BLUE = 'azul'
-    RED = 'rojo'
-    GREEN = 'verde'
+    YELLOW = 'Yellow'
+    BLUE = 'Blue'
+    RED = 'Red'
+    GREEN = 'Green'
 
 
 class Value(Enum):
@@ -27,9 +27,9 @@ class Value(Enum):
     SEVEN = '7'
     EIGHT = '8'
     NINE = '9'
-    REVERSED = 'reversa'
-    JUMP = 'salto'
-    TAKE_TWO = 'tome_dos'
+    REVERSED = 'Reverse'
+    JUMP = 'Skip'
+    TAKE_TWO = 'Draw'
 
 
 class PlayerType(Enum):

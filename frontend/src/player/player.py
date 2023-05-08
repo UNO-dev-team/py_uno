@@ -87,14 +87,14 @@ class BasePlayer(ABC):
 
 class Jugador:
     def __init__(self, nombre):
-        self.nombre = nombre
+        self.name = nombre
         self.hand = Hand()
 
 
 def dibujar_info_jugadores(ventana, jugadores):
     fuente = Font(None, 24)
     for i, jugador in enumerate(jugadores):
-        nombre = f"{jugador.nombre}: {len(jugador.mano.cartas)} cartas"
+        nombre = f"{jugador.name}: {len(jugador.hand)} cartas"
         texto = fuente.render(nombre, 1, (0, 0, 0))
         if i == 0:
             ventana.blit(texto, (10, ALTO_VENTANA - 280))
